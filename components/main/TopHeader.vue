@@ -52,27 +52,72 @@
       </v-col>
     </v-row>
     <v-navigation-drawer v-model="drawer" absolute temporary right>
+      <template v-slot:prepend>
+        <v-list-item class="pa-5">
+          <v-list-item-avatar class="ma-auto">
+            <!-- <img src="https://randomuser.me/api/portraits/women/81.jpg" /> -->
+            logo
+          </v-list-item-avatar>
+        </v-list-item>
+      </template>
+      <v-divider></v-divider>
       <v-list nav dense>
-        <v-list-item-group
-          v-model="group"
-          active-class="deep-purple--text text--accent-4"
+        <v-list-item nuxt to="/" active-class="primary--text" class="my-2">
+          <v-list-item-title class="text-body-1">الرئيسية</v-list-item-title>
+        </v-list-item>
+        <v-list-item nuxt to="/store" active-class="primary--text" class="my-2">
+          <v-list-item-title class="text-body-1">المتجر</v-list-item-title>
+        </v-list-item>
+
+        <!-- <v-list-item>
+          <v-list-item-title>الاقسام</v-list-item-title>
+        </v-list-item> -->
+        <v-list-group
+          :value="false"
+          no-action
+          active-class="primary--text"
+          class="my-2"
         >
-          <v-list-item>
-            <v-list-item-title>Foo</v-list-item-title>
-          </v-list-item>
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title class="text-body-1">الاقسام</v-list-item-title>
+            </v-list-item-content>
+          </template>
 
-          <v-list-item>
-            <v-list-item-title>Bar</v-list-item-title>
+          <v-list-item
+            v-for="(cat, i) in categories"
+            :key="i"
+            nuxt
+            :to="`/category/${cat.slug}`"
+            class="my-2"
+          >
+            <v-list-item-title
+              v-text="cat.name"
+              class="text-body-1"
+            ></v-list-item-title>
           </v-list-item>
+        </v-list-group>
 
-          <v-list-item>
-            <v-list-item-title>Fizz</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-title>Buzz</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
+        <v-list-item
+          nuxt
+          to="/courses"
+          active-class="primary--text"
+          class="my-2"
+        >
+          <v-list-item-title class="text-body-1"
+            >الورشة التعليمة</v-list-item-title
+          >
+        </v-list-item>
+        <v-list-item
+          nuxt
+          to="/helping-tools"
+          active-class="primary--text"
+          class="my-2"
+        >
+          <v-list-item-title class="text-body-1"
+            >ادوات المساعدة</v-list-item-title
+          >
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
   </v-container>
@@ -81,10 +126,21 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
+  props: ["categories", "items"],
   data() {
     return {
       drawer: false,
       group: null,
+      admins: [
+        ["Management", "mdi-account-multiple-outline"],
+        ["Settings", "mdi-cog-outline"],
+      ],
+      cruds: [
+        ["Create", "mdi-plus-outline"],
+        ["Read", "mdi-file-outline"],
+        ["Update", "mdi-update"],
+        ["Delete", "mdi-delete"],
+      ],
     };
   },
   watch: {
