@@ -132,6 +132,7 @@ export default {
       this.options[index].in_stock
         ? (this.is_available = true)
         : (this.is_available = false);
+      this.stock = this.options[index].in_stock;
       this.selectedProduct.qty = 1;
       this.selectedProduct.thumbnail = this.options[index].thumbnail.path;
       this.$emit("selectedOption", index);
