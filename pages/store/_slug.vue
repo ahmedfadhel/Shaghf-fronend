@@ -1,18 +1,7 @@
 <template>
   <div id="product">
-    <div class="breadcrumbs grey lighten-4">
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <v-breadcrumbs
-              :items="breadcrubsItems"
-              large
-              class="pt-2 pb-2"
-            ></v-breadcrumbs>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
+    <CustomBreadcrumbs :items="breadcrubsItems" />
+
     <div class="product">
       <v-container>
         <v-row>
@@ -117,6 +106,8 @@ import ColorOptions from "~/components/main/options/ColorOptions.vue";
 import GeneralOptions from "~/components/main/options/GeneralOptions.vue";
 import QuentityOptions from "~/components/main/options/QuentityOptions.vue";
 import RelatedProducts from "~/components/main/RelatedProducts.vue";
+import CustomBreadcrumbs from "~/components/main/CustomBreadcrumbs.vue";
+
 import { mapActions } from "vuex";
 export default {
   async asyncData({ params, $axios }) {
@@ -169,6 +160,7 @@ export default {
     GeneralOptions,
     QuentityOptions,
     RelatedProducts,
+    CustomBreadcrumbs,
   },
   methods: {
     ...mapActions(["snackbar"]),

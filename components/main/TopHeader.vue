@@ -68,10 +68,6 @@
         <v-list-item nuxt to="/store" active-class="primary--text" class="my-2">
           <v-list-item-title class="text-body-1">المتجر</v-list-item-title>
         </v-list-item>
-
-        <!-- <v-list-item>
-          <v-list-item-title>الاقسام</v-list-item-title>
-        </v-list-item> -->
         <v-list-group
           :value="false"
           no-action
@@ -131,16 +127,6 @@ export default {
     return {
       drawer: false,
       group: null,
-      admins: [
-        ["Management", "mdi-account-multiple-outline"],
-        ["Settings", "mdi-cog-outline"],
-      ],
-      cruds: [
-        ["Create", "mdi-plus-outline"],
-        ["Read", "mdi-file-outline"],
-        ["Update", "mdi-update"],
-        ["Delete", "mdi-delete"],
-      ],
     };
   },
   watch: {

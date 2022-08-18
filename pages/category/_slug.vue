@@ -1,42 +1,38 @@
 <template>
   <div class="categroy-list pb-5">
-    <div class="breadcrumbs grey lighten-4">
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <v-breadcrumbs
-              :items="breadcrubsItems"
-              large
-              class="pt-2 pb-2"
-            ></v-breadcrumbs>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
+    <CustomBreadcrumbs :items="breadcrubsItems" />
+
     <div class="categroy-products">
       <v-container>
         <v-row>
           <v-col cols="12">
             <h1 class="mb-5">المنتجات</h1>
           </v-col>
-          <v-container>
-            <v-row v-if="products.length">
-              <v-col
-                cols="12"
-                sm="6"
-                md="3"
-                v-for="(product, i) in products"
-                :key="i"
-              >
-                <SingleProduct :product="product" height="250px"
-              /></v-col>
-            </v-row>
-            <v-row v-else>
-              <v-col cols="12">
-                <NoItemFound />
-              </v-col>
-            </v-row>
-          </v-container>
+        </v-row>
+        <v-row v-if="!prod.length">
+          <v-col cols="12" md="4" v-for="(sk, i) in Array(12)" :key="i">
+            <v-skeleton-loader v-bind="attrs" type="card"></v-skeleton-loader>
+          </v-col>
+        </v-row>
+        <v-row v-if="products.length">
+          <v-col
+            cols="12"
+            sm="6"
+            md="3"
+            v-for="(product, i) in products"
+            :key="i"
+          >
+            <SingleProduct :product="product" height="250px"
+          /></v-col>
+        </v-row>
+        <v-row>
+          <v-col colsd="12">
+            <v-pagination
+              v-model="page"
+              :length="paginationLength"
+              @input="changePagination"
+            ></v-pagination>
+          </v-col>
         </v-row>
       </v-container>
     </div>
@@ -44,28 +40,37 @@
 </template>
 <script>
 import SingleProduct from "~/components/main/SingleProduct";
-import NoItemFound from "~/components/main/NoItemFound.vue";
+import CustomBreadcrumbs from "~/components/main/CustomBreadcrumbs.vue";
+
 export default {
-  async asyncData({ params, $axios, error }) {
+  async asyncData({ params, $axios, error, query }) {
     try {
+      const page = query.page || 1;
       let result = await $axios.get(
-        `api/store/category/${encodeURI(params.slug)}`
+        `api/store/category/${encodeURI(params.slug)}?page=${page}`
       );
-      console.log(result.data);
       return {
-        products: result.data,
+        products: result.data.results,
         slug: params.slug,
+        paginationLength: Math.ceil(result.data.count / result.data.page_size),
+        page: result.data.page,
       };
     } catch (err) {
       error({ statusCode: 404, message: "Page not found" });
     }
   },
+  watchQuery: ["page"],
   components: {
     SingleProduct,
-    NoItemFound,
+    CustomBreadcrumbs,
   },
   data() {
     return {
+      attrs: {
+        class: "mb-6",
+        boilerplate: true,
+        elevation: 2,
+      },
       items: [
         {
           text: "المتجر",
@@ -79,9 +84,13 @@ export default {
       ],
     };
   },
+  methods: {
+    changePagination() {
+      this.$router.push({ query: { page: this.page } });
+    },
+  },
   computed: {
     breadcrubsItems() {
-      console.log(this.products.length);
       let currentPage = {
         text: this.products.length
           ? this.products[0].product.category.name
@@ -92,6 +101,9 @@ export default {
           : `/category/${this.slug}`,
       };
       return [...this.items, currentPage];
+    },
+    prod() {
+      return this.products;
     },
   },
 };
