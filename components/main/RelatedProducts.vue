@@ -1,5 +1,5 @@
 <template>
-  <div class="related_products mt-10 pb-10">
+  <div class="related_products mt-10 pb-10 grey lighten-4">
     <v-container>
       <v-row>
         <v-col cols="12" align="center">
@@ -11,11 +11,11 @@
           cols="12"
           xs="12"
           sm="6"
-          md="4"
+          md="3"
           v-for="(product, i) in products"
           :key="i"
         >
-          <SingleProduct :product="product" height="350px" />
+          <SingleProduct :product="product" height="250px" />
         </v-col>
       </v-row>
     </v-container>

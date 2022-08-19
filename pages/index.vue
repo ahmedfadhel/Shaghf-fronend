@@ -50,6 +50,18 @@ export default {
       featuredProducts: featuredProductResult.data,
     };
   },
+  head() {
+    return {
+      title: "متجر شغف",
+      meta: [
+        {
+          hid: "description",
+          name: "description",
+          content: "general description about the whole site",
+        },
+      ],
+    };
+  },
   components: {
     Banner,
     FeaturedCategory,

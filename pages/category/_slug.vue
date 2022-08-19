@@ -6,7 +6,7 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <h1 class="mb-5">المنتجات</h1>
+            <h1 class="mb-5">قسم - {{ categoryName }}</h1>
           </v-col>
         </v-row>
         <v-row v-if="!prod.length">
@@ -49,9 +49,13 @@ export default {
       let result = await $axios.get(
         `api/store/category/${encodeURI(params.slug)}?page=${page}`
       );
+      console.log(result.data.results[0].product.category.description);
       return {
         products: result.data.results,
         slug: params.slug,
+        categoryName: result.data.results[0].product.category.name,
+        categoryDescription:
+          result.data.results[0].product.category.description,
         paginationLength: Math.ceil(result.data.count / result.data.page_size),
         page: result.data.page,
       };
@@ -63,6 +67,18 @@ export default {
   components: {
     SingleProduct,
     CustomBreadcrumbs,
+  },
+  head() {
+    return {
+      title: "متجر شغف - قسم " + this.categoryName,
+      meta: [
+        {
+          hid: "description",
+          name: "description",
+          content: this.categoryDescription,
+        },
+      ],
+    };
   },
   data() {
     return {

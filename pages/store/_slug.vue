@@ -116,6 +116,7 @@ export default {
     );
     return {
       product: proResult.data.product,
+
       relatedProducts: proResult.data.related_products,
     };
   },
@@ -134,7 +135,18 @@ export default {
       }
     });
   },
-
+  head() {
+    return {
+      title: "متجر شغف - " + this.product.name,
+      meta: [
+        {
+          hid: "description",
+          name: "description",
+          content: this.product.description,
+        },
+      ],
+    };
+  },
   data() {
     return {
       items: [

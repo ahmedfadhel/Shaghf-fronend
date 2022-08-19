@@ -78,7 +78,11 @@ export default {
     SingleProduct,
     CustomBreadcrumbs,
   },
-
+  head() {
+    return {
+      title: "متجر شغف - المتجر",
+    };
+  },
   data() {
     return {
       attrs: {
