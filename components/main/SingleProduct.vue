@@ -18,7 +18,7 @@
         غير متوفر</span
       >
     </v-img>
-    <v-card-title class="justify-center pb-2 text-h5">{{
+    <v-card-title class="justify-center pb-2 text-h6 text-md-h5">{{
       product.product.name
     }}</v-card-title>
     <v-card-text class="text-center primary--text">

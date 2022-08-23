@@ -26,7 +26,7 @@
           </v-row>
           <v-row>
             <v-col
-              cols="12"
+              cols="6"
               sm="6"
               md="3"
               v-for="(product, i) in products"

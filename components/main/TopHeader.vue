@@ -10,14 +10,17 @@
         order-md="3"
       >
         <v-responsive max-width="260" class="d-flex align-self-end">
-          <v-text-field
-            dense
-            flat
-            hide-details
-            rounded
-            solo-inverted
-            placeholder="بحث"
-          ></v-text-field>
+          <v-form @submit.prevent="submitSearch">
+            <v-text-field
+              v-model="search"
+              dense
+              flat
+              hide-details
+              rounded
+              solo-inverted
+              placeholder="بحث"
+            ></v-text-field>
+          </v-form>
         </v-responsive>
       </v-col>
       <v-col cols="12" md="4" lg="6" align="center" order="1" order-md="2"
@@ -127,6 +130,7 @@ export default {
     return {
       drawer: false,
       group: null,
+      search: null,
     };
   },
   watch: {
@@ -143,6 +147,9 @@ export default {
   methods: {
     showSideBar() {
       this.drawer = !this.drawer;
+    },
+    submitSearch() {
+      this.$router.push({ path: "/search", query: { query: this.search } });
     },
   },
 };
