@@ -149,7 +149,11 @@ export default {
       this.drawer = !this.drawer;
     },
     submitSearch() {
-      this.$router.push({ path: "/search", query: { query: this.search } });
+      this.$router.push({
+        path: "/search",
+        query: { query: this.search, page: 1 },
+      });
+      this.search = null;
     },
   },
 };

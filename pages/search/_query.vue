@@ -23,7 +23,12 @@
       </v-row>
       <v-row v-else>
         <v-col cols="6" sm="6" md="3" v-for="(product, i) in products" :key="i">
-          <SingleProduct :product="product" height="250px" />
+          <SingleProduct :product="product" height="250px" :search="true" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-pagination></v-pagination>
         </v-col>
       </v-row>
     </v-container>
@@ -36,6 +41,11 @@
 import CustomBreadcrumbs from "~/components/main/CustomBreadcrumbs.vue";
 import SingleProduct from "~/components/main/SingleProduct.vue";
 export default {
+  head() {
+    return {
+      title: "متجر شغف - بحث " + this.$route.query.query,
+    };
+  },
   data() {
     return {
       products: [],
@@ -43,6 +53,8 @@ export default {
         class: "mb-6",
         boilerplate: true,
         elevation: 2,
+        page: 1,
+        paginationLength: 1,
       },
       items: [
         {
@@ -73,7 +85,13 @@ export default {
     let result = await this.$axios.get(
       encodeURI("api/store/search/" + this.$route.query.query)
     );
+    console.log(result.data);
     this.products = result.data;
+  },
+  methods: {
+    changePagination() {
+      console.log("test");
+    },
   },
 };
 </script>

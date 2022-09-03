@@ -18,9 +18,16 @@
         غير متوفر</span
       >
     </v-img>
-    <v-card-title class="justify-center pb-2 text-h6 text-md-h5">{{
-      product.product.name
-    }}</v-card-title>
+    <v-card-title class="justify-center pb-2 text-h6 text-md-h5">
+      {{ product.product.name }}
+      <br />
+    </v-card-title>
+    <v-card-subtitle
+      class="text-center pb-2 mt-n2 text-h6 text-md-h5"
+      v-if="search && product.option.name !== 'qu'"
+    >
+      ({{ product.name }})
+    </v-card-subtitle>
     <v-card-text class="text-center primary--text">
       <span :class="getDiscountClasses"
         >{{ product.price }} <sup>د.ع</sup></span
@@ -39,7 +46,7 @@
 
 <script>
 export default {
-  props: ["product", "height"],
+  props: ["product", "height", "search"],
 
   methods: {},
   computed: {

@@ -49,7 +49,6 @@ export default {
       let result = await $axios.get(
         `api/store/category/${encodeURI(params.slug)}?page=${page}`
       );
-      console.log(result.data.results[0].product.category.description);
       return {
         products: result.data.results,
         slug: params.slug,
