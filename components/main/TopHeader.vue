@@ -35,7 +35,7 @@
         class="justify-start d-flex"
       >
         <v-btn plain v-if="$vuetify.breakpoint.smAndDown" @click="showSideBar">
-          <v-icon>mdi-menu</v-icon>
+          <v-icon large>mdi-menu</v-icon>
         </v-btn>
         <v-btn plain color="blue-grey darken-2" nuxt to="/cart">
           <v-badge
@@ -45,8 +45,11 @@
             offset-y="5"
             :content="parseCartLength"
           >
-            <v-icon> mdi-cart </v-icon>
+            <v-icon large> mdi-cart </v-icon>
           </v-badge>
+        </v-btn>
+        <v-btn plain color="blue-grey darken-2" nuxt to="/follow">
+          <v-icon large> mdi-truck-fast </v-icon>
         </v-btn>
 
         <!-- <v-btn color="primary" outlined class="text-body-1">
@@ -131,6 +134,7 @@ export default {
       drawer: false,
       group: null,
       search: null,
+      tracking: null,
     };
   },
   watch: {
@@ -147,6 +151,10 @@ export default {
   methods: {
     showSideBar() {
       this.drawer = !this.drawer;
+    },
+    clickTracking() {
+      console.log("clicked");
+      this.tracking = !this.tracking;
     },
     submitSearch() {
       this.$router.push({
