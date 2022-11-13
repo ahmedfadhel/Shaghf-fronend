@@ -94,6 +94,11 @@ export default {
           to: "/dashboard/orders",
         },
         {
+          icon: "mdi-ticket-percent",
+          title: "كوبونات الخصم",
+          to: "/dashboard/discount",
+        },
+        {
           icon: "mdi-account",
           title: "الاعضاء",
           to: "/dashboard/accounts",
