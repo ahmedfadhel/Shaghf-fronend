@@ -32,7 +32,6 @@
             ></v-text-field>
             <v-select
               v-model="coupon.discount_type"
-              :hint="`${coupon.discount_type.text}, ${coupon.discount_type.abbr}`"
               :items="coupon_discount_type"
               item-text="text"
               item-value="abbr"
@@ -112,7 +111,7 @@
               block
               x-large
               class="text-h6"
-              @click="console.log('saved')"
+              @click="saveCoupon()"
             >
               حفظ الكوبون</v-btn
             >
@@ -120,10 +119,10 @@
         </v-col>
         <!-- Create New Tag Section End -->
         <!-- Display Tag List Section Start -->
-        <!-- <v-col cols="12" md="8">
+        <v-col cols="12" md="8">
           <v-card>
             <v-card-title class="font-weight-bold text-h5 primary white--text">
-              العلامات الموسومة
+              الكوبونات
               <v-spacer></v-spacer>
               <v-text-field
                 v-model="search"
@@ -135,20 +134,32 @@
               ></v-text-field>
             </v-card-title>
             <v-divider></v-divider>
-            <v-data-table :headers="headers" :items="tags" :search="search">
-              <template v-slot:item.name="{ item }">
+            <v-data-table :headers="headers" :items="coupons" :search="search">
+              <template v-slot:item.code="{ item }">
                 <td class="font-weight-bold text-center text-body-1">
-                  {{ item.name }}
+                  {{ item.code }}
                 </td>
               </template>
-              <template v-slot:item.slug="{ item }">
+              <template v-slot:item.discount_type="{ item }">
                 <td class="font-weight-bold text-center text-body-1">
-                  {{ item.slug }}
+                  {{ item.discount_type | discountTypeFilter }}
                 </td>
               </template>
-              <template v-slot:item.updated_at="{ item }">
+              <template v-slot:item.valid_from="{ item }">
                 <td class="font-weight-bold text-center text-body-1">
-                  {{ item.updated_at }}
+                  {{ item.valid_from }}
+                </td>
+              </template>
+              <template v-slot:item.valid_to="{ item }">
+                <td class="font-weight-bold text-center text-body-1">
+                  {{ item.valid_to }}
+                </td>
+              </template>
+              <template v-slot:item.is_active="{ item }">
+                <td class="font-weight-bold text-center text-body-1">
+                  <!-- {{ item.is_active || isActiveFilter}} -->
+                  <v-chip color="success" v-if="item.is_active">صالح</v-chip>
+                  <v-chip color="error" v-else>غير صالح</v-chip>
                 </td>
               </template>
               <template v-slot:item.actions="{ item }">
@@ -157,7 +168,7 @@
                   outlined
                   small
                   class="text-body-1 mb-1"
-                  @click="editTag(item)"
+                  @click="console.log('edit')"
                 >
                   <v-icon small> mdi-pencil </v-icon>
                   تعديل
@@ -167,7 +178,7 @@
                   outlined
                   small
                   class="text-body-1 mb-1"
-                  @click="deleteTag(item)"
+                  @click="console.log('delete')"
                 >
                   <v-icon small> mdi-delete </v-icon>
                   حذف
@@ -175,7 +186,7 @@
               </template>
             </v-data-table>
           </v-card>
-        </v-col> -->
+        </v-col>
         <!-- Display Tag List Section End -->
       </v-row>
     </v-card>
@@ -183,12 +194,64 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   layout: "dashboard",
+  async asyncData({ $axios }) {
+    let fetchCoupons = await $axios.get("api/dashboard/coupons");
+    let coupons = fetchCoupons.data;
+    return { coupons };
+  },
   data() {
     return {
       modal: false,
       modal1: false,
+      search: "",
+      headers: [
+        {
+          text: "كوبون الخصم",
+          value: "code",
+          class: "text-body-1  font-weight-bold",
+          align: "center",
+        },
+        {
+          text: "قيمة الخصم",
+          value: "discount",
+          class: "text-body-1  font-weight-bold",
+          align: "center",
+        },
+        {
+          text: "نوع الكوبون",
+          value: "discount_type",
+          class: "text-body-1  font-weight-bold",
+          align: "center",
+        },
+        {
+          text: " بدأ الكوبون",
+          value: "valid_from",
+          class: "text-body-1 font-weight-bold",
+          align: "center",
+        },
+        {
+          text: " انتهاء الكوبون",
+          value: "valid_to",
+          class: "text-body-1  font-weight-bold",
+          align: "center",
+        },
+        {
+          text: "حالة الكوبون",
+          value: "is_active",
+          class: "text-body-1  font-weight-bold",
+          align: "center",
+        },
+        {
+          text: "التحكم",
+          value: "actions",
+          class: "text-body-1  font-weight-bold",
+          align: "center",
+        },
+      ],
       coupon_discount_type: [
         {
           text: "قيمة",
@@ -202,10 +265,7 @@ export default {
       coupon: {
         code: "",
         discount: 0,
-        discount_type: {
-          text: "قيمة",
-          abbr: "pr",
-        },
+        discount_type: "pr",
 
         valid_from: new Date(
           Date.now() - new Date().getTimezoneOffset() * 60000
@@ -217,6 +277,69 @@ export default {
           .substr(0, 10),
       },
     };
+  },
+  methods: {
+    ...mapActions(["snackbar"]),
+    async saveCoupon() {
+      try {
+        let result = await this.$axios.post(
+          "api/dashboard/coupon/create",
+          {
+            code: this.coupon.code,
+            discount: this.coupon.discount,
+            discount_type: this.coupon.discount_type,
+            valid_from: this.coupon.valid_from,
+            valid_to: this.coupon.valid_to,
+          },
+          {
+            headers: {
+              "Content-Type": "Application/json",
+            },
+          }
+        );
+        if (result.status === 200) {
+          this.coupons.push(result.data);
+          this.snackbar({
+            status: true,
+            color: "success",
+            message: "تمت الاضافة بنجاح",
+          });
+          this.restCoupon();
+        }
+      } catch (error) {
+        if (error.response.status === 400) {
+          this.snackbar({
+            status: true,
+            color: "error",
+            // message: error.response.data.name[0],
+            message: Object.keys(error.response.data)
+              .map((key) => `${key}=${error.response.data[key]}`)
+              .join("\n"),
+          });
+        }
+      }
+    },
+    restCoupon() {
+      this.coupon.code = "";
+      this.coupon.discount = 0;
+      this.coupon.discount_type = "pr";
+      this.coupon.valid_from = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10);
+
+      this.coupon.valid_to = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10);
+    },
+  },
+  filters: {
+    discountTypeFilter(val) {
+      return val === "pr" ? "خصم قيمة" : "خصم التوصيل";
+    },
   },
 };
 </script>
