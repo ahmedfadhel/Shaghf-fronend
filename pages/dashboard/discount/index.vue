@@ -168,7 +168,7 @@
                   outlined
                   small
                   class="text-body-1 mb-1"
-                  @click="console.log('edit')"
+                  @click="editCoupon(item)"
                 >
                   <v-icon small> mdi-pencil </v-icon>
                   تعديل
@@ -190,12 +190,23 @@
         <!-- Display Tag List Section End -->
       </v-row>
     </v-card>
+    <!-- Edit Coupon Section Start -->
+
+    <v-dialog v-model="dialog" width="500">
+      <EditCouponForm
+        :coupon="editedCoupon"
+        @close="close"
+        @success="updateSuccess"
+        @failed="updateFailed"
+      />
+    </v-dialog>
+    <!-- Edit Coupon Section End -->
   </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-
+import EditCouponForm from "~/components/dashboard/EditCouponForm.vue";
 export default {
   layout: "dashboard",
   async asyncData({ $axios }) {
@@ -203,11 +214,24 @@ export default {
     let coupons = fetchCoupons.data;
     return { coupons };
   },
+  components: {
+    EditCouponForm,
+  },
   data() {
     return {
       modal: false,
       modal1: false,
+      dialog: false,
       search: "",
+      editedCoupon: {
+        id: -1,
+        code: null,
+        discount: null,
+        discount_type: null,
+        valid_from: null,
+        valid_to: null,
+      },
+      editedCouponIndex: -1,
       headers: [
         {
           text: "كوبون الخصم",
@@ -318,6 +342,23 @@ export default {
         }
       }
     },
+    resetEditedCoupon() {
+      this.editedCoupon.id = -1;
+      this.editedCoupon.discount = null;
+      this.editedCoupon.discount_type = null;
+      this.editedCoupon.valid_from = null;
+      this.editedCoupon.valid_to = null;
+    },
+    editCoupon(item) {
+      this.editedCouponIndex = this.coupons.indexOf(item);
+      this.editedCoupon.id = item.id;
+      this.editedCoupon.code = item.code;
+      this.editedCoupon.discount = item.discount;
+      this.editedCoupon.discount_type = item.discount_type;
+      this.editedCoupon.valid_from = item.valid_from;
+      this.editedCoupon.valid_to = item.valid_to;
+      this.dialog = true;
+    },
     async deleteCoupon(id) {
       try {
         let result = await this.$axios.delete(
@@ -361,6 +402,31 @@ export default {
       )
         .toISOString()
         .substr(0, 10);
+    },
+    updateSuccess(val) {
+      if (this.editedCouponIndex > -1) {
+        Object.assign(this.coupons[this.editedCouponIndex], val);
+      }
+      this.snackbar({
+        status: true,
+        color: "success",
+        message: "تم التعديل بنجاح",
+      });
+      this.dialog = false;
+      this.resetEditedCoupon();
+    },
+    updateFailed(val) {
+      this.snackbar({
+        status: true,
+        color: "error",
+        message: val,
+      });
+      this.dialog = false;
+      this.resetEditedCoupon();
+    },
+    close() {
+      this.resetEditedCoupon();
+      this.dialog = false;
     },
   },
   filters: {
