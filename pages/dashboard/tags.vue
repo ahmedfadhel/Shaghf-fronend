@@ -205,7 +205,7 @@ export default {
             color: "error",
             // message: error.response.data.name[0],
             message: Object.keys(error.response.data)
-              .map((key) => `${key}=${error.response.data[key]}`)
+              .map((key) => `${key} = ${error.response.data[key]}`)
               .join("\n"),
           });
         }

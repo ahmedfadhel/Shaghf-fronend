@@ -178,7 +178,7 @@
                   outlined
                   small
                   class="text-body-1 mb-1"
-                  @click="console.log('delete')"
+                  @click="deleteCoupon(item.id)"
                 >
                   <v-icon small> mdi-delete </v-icon>
                   حذف
@@ -311,12 +311,39 @@ export default {
           this.snackbar({
             status: true,
             color: "error",
-            // message: error.response.data.name[0],
             message: Object.keys(error.response.data)
               .map((key) => `${key}=${error.response.data[key]}`)
               .join("\n"),
           });
         }
+      }
+    },
+    async deleteCoupon(id) {
+      try {
+        let result = await this.$axios.delete(
+          `api/dashboard/coupon/${id}/delete`,
+          {
+            headers: {
+              "Content-Type": "Application/json",
+            },
+          }
+        );
+        if (result.status === 204) {
+          this.coupons = this.coupons.filter((ele) => ele.id !== id);
+          this.snackbar({
+            status: true,
+            color: "success",
+            message: "تمت الحذف بنجاح",
+          });
+        }
+      } catch (error) {
+        this.snackbar({
+          status: true,
+          color: "error",
+          message: Object.keys(error.response.data)
+            .map((key) => `${key} : ${error.response.data[key]}`)
+            .join("\n"),
+        });
       }
     },
     restCoupon() {
